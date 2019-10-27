@@ -65,12 +65,19 @@ vclf = vclf.fit(train, target_train)'''
 print("Stacking") 
 models = [lgb_model1, lgb_model2, lgb_model3]
 S_train, S_test = stacking(models, train, target_train, test)
-print("Fitting")
+
+model = XGBClassifier(random_state=0, n_jobs=-1, learning_rate=0.1, n_estimators=100, max_depth=3, objective='multi:softprob')
+    
+model = model.fit(S_train, y_train)
+
+y_pred = model.predict_proba(S_test)
+
+#print("Fitting")
 # Fitting stacker-predicted data on new model
-lgb_model.fit(S_train, target_train)
-print("Predicting")
+#lgb_model.fit(S_train, target_train)
+#print("Predicting")
 # Predicting form the test set
-y_pred = lgb_model.predict_proba(S_test, raw_scores=True)
+#y_pred = lgb_model.predict_proba(S_test, raw_scores=True)
 
 # Creating submission to fit Kaggles requirements
 submission = pd.DataFrame()
