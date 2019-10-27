@@ -50,6 +50,7 @@ params3['n_estimators'] = 1500
 lgb_model1 = LGBMClassifier(**params)
 lgb_model2 = LGBMClassifier(**params2)
 lgb_model3 = LGBMClassifier(**params3)
+lgb_model = lgb_model1
 
 '''# Creating a classifier based on the voting result of the three previous ones
 vclf = VotingClassifier(estimators=[('1', lgb_model1), ('2', lgb_model2), ('3', lgb_model3)], voting='soft')
