@@ -21,9 +21,11 @@ col_to_drop = train.columns[train.columns.str.startswith('ps_calc_')]
 train = train.drop(col_to_drop, axis=1)  
 test = test.drop(col_to_drop, axis=1)  
 
-# Replacing missing data
-train = train.replace(-1, np.nan)
-test = test.replace(-1, np.nan)
+# Replace missing values with the mode of the feature
+df_train = train
+for i, feature in enumerate(list(df_train.drop(['id'], axis=1))):
+    if df_train[feature].isnull().sum() > 0:
+        df_train[feature].fillna(df_train[feature].mode()[0],inplace=True)
 
 # Selecting the 'cat' features for one-hot encoding
 cat_features = [a for a in train.columns if a.endswith('cat')]
