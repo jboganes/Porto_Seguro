@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.ensemble import VotingClassifier
 from lightgbm import LGBMClassifier
+from vecstack import stacking
 
 # Importing the data
 train = pd.read_csv('data/train.csv')
@@ -50,11 +51,23 @@ lgb_model1 = LGBMClassifier(**params)
 lgb_model2 = LGBMClassifier(**params2)
 lgb_model3 = LGBMClassifier(**params3)
 
-# Creating a classifier based on the voting result of the three previous ones
+'''# Creating a classifier based on the voting result of the three previous ones
 vclf = VotingClassifier(estimators=[('1', lgb_model1), ('2', lgb_model2), ('3', lgb_model3)], voting='soft')
 
 # Fitting the new model
-vclf = vclf.fit(train, target_train)
+vclf = vclf.fit(train, target_train)'''
+
+# This ended up taking too long, ran it for hours to no avail.
+# Stacking the three models
+print("Stacking") 
+models = [lgb_model1, lgb_model2, lgb_model3]
+S_train, S_test = stacking(models, train, target_train, test)
+print("Fitting")
+# Fitting stacker-predicted data on new model
+lgb_model.fit(S_train, target_train)
+print("Predicting")
+# Predicting form the test set
+y_pred = lgb_model.predict_proba(S_test, raw_scores=True)
 
 # Creating submission to fit Kaggles requirements
 submission = pd.DataFrame()
